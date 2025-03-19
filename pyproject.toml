@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "vacancy-tracker"
+version = "0.1.0"
+description = ""
+authors = ["Aleksei <svid.aleksei@ya.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
