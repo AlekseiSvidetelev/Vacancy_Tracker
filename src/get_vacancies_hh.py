@@ -15,6 +15,14 @@ class Vacancy(ABC):
         self.vacancies = []
         self.__connect = False
 
+    @property
+    def connect(self):
+        return self.__connect
+
+    def __repr__(self):
+        return f"{type(self.connect)}"
+
+
 
 class HeadHunterAPI(Vacancy):
     """ Класс для работы с API HeadHunter """
@@ -25,21 +33,17 @@ class HeadHunterAPI(Vacancy):
 
     def __init__(self):
         super().__init__()
-        self.url = 'https://api.hh.ru/vacancies'
-        self.headers = {'User-Agent': 'HH-User-Agent'}
+        self.__url = 'https://api.hh.ru/vacancies'
+        self.__headers = {'User-Agent': 'HH-User-Agent'}
         self.params = {'text': '', 'page': 0, 'per_page': 100}
 
+    @property
+    def url(self):
+        return self.__url
 
-    def _connect(self):
-        """Приватный метод подключения к API"""
-        try:
-            response = requests.get(self.url, headers=self.headers)
-            response.raise_for_status()
-            self.__connected = True
-        except requests.exceptions.RequestException as e:
-            print(f"Ошибка подключения: {e}")
-            self.__connected = False
-
+    @property
+    def headers(self):
+        return self.__headers
 
     def load_vacancies(self, keyword: str, max_pages: int = 20) -> None:
         """ Получение вакансий по ключевому слову """
@@ -49,18 +53,17 @@ class HeadHunterAPI(Vacancy):
         while self.params.get('page') < max_pages:
             try:
                 response = requests.get(self.url, headers=self.headers, params=self.params)
+                if response.status_code != 200:
+                    raise Exception(f"Ошибка: {response.status_code}")
                 data = response.json()
-                # print(data)
                 self.vacancies.extend(data['items'])
-                if self.params.get('page') >= data['pages'] - 1:
+                if self.params.get('page') >= data.get('pages') - 1:
                     break
                 self.params['page'] += 1
                 time.sleep(0.5)
-
             except Exception as e:
                 print(f"Ошибка '{Exception}': {e}")
                 break
-
 
     def save_to_json(self, filename: str) -> None:
         """Сохранение полученных вакансий в JSON-файл"""
@@ -83,5 +86,6 @@ if __name__ == "__main__":
     hh_api = HeadHunterAPI()
     hh_api.load_vacancies("Python developer", max_pages=1)
     hh_api.save_to_json("vacancies.json")
+    print(repr(HeadHunterAPI.connect))
     print(f"Найдено вакансий: {len(hh_api.vacancies)}")
 
