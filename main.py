@@ -4,7 +4,7 @@ from src.get_vacancies_hh import HeadHunterAPI, Vacancy
 hh_api = HeadHunterAPI()
 
 # Получение вакансий с hh.ru в формате JSON
-hh_vacancies = hh_api.get_vacancies("vacancies.json")
+hh_vacancies = hh_api.get_vacancies_hh("vacancies.json")
 
 # Преобразование набора данных из JSON в список объектов
 vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
