@@ -1,8 +1,4 @@
-
-
-
 class Vacancies:
-
 
     def __init__(self, title, url, salary, company, description, experience=None, schedule=None):
 
@@ -18,10 +14,8 @@ class Vacancies:
         pass
 
     @classmethod
-    def cast_to_object_list(cls, ):
-        """ Преобразование данных из JSON файла в список объектов Vacancies """
+    def cast_to_object_list(
+        cls,
+    ):
+        """Преобразование данных из JSON файла в список объектов Vacancies"""
         vacancies = []
-
-
-
-
