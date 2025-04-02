@@ -1,5 +1,5 @@
 import os
-from typing import Any
+from typing import Any, Optional
 import requests
 import time
 from abc import ABC, abstractmethod
@@ -25,16 +25,25 @@ class VacancyAPI(ABC):
 class HeadHunterAPI(VacancyAPI):
     """Класс для работы с API HeadHunter"""
 
-    def __init__(self, file_worker=None, number_vacancies=100, search_word=""):
+    vacancies: list
+    file_worker: str
+    search_word: str
+    number_vacancies: int
+    connected_status: bool
+    url: str
+    headers: dict[str, str]
+    params: dict[str, str | int]
+
+    def __init__(self, file_worker: str, number_vacancies: int, search_word: str = ""):
         super().__init__(file_worker)
-        self.__vacancies = []
+        self.__vacancies: list[dict[str, Any]] = []
         self.__file_worker = file_worker if file_worker else "vacancies.json"
         self.search_word = search_word
-        self.number_vacancies = number_vacancies
+        self.number_vacancies = number_vacancies if number_vacancies else 100
         self.__connected_status = False
         self.__url = "https://api.hh.ru/vacancies"
-        self.__headers = {AGENT_HH_API: TOKEN_HH_API}
-        self.__params = {"text": "", "page": 0, "per_page": 100}
+        self.__headers: dict[str, str] = {AGENT_HH_API: TOKEN_HH_API}
+        self.__params: Any = {"text": "", "page": 0, "per_page": 100}
 
     def __repr__(self) -> str:
         return (
@@ -45,25 +54,25 @@ class HeadHunterAPI(VacancyAPI):
             f"Статус подключения = {self.connected_status}"
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Найдено вакансий: {len(self.vacancies)}"
 
     @property
-    def vacancies(self):
+    def vacancies(self) -> list[dict[str, Any]]:
         """Геттер для доступа к списку вакансий"""
         return self.__vacancies
 
     @property
-    def connected_status(self):
+    def connected_status(self) -> bool:
         """Геттер для статуса подключения"""
         return self.__connected_status
 
     @property
-    def url(self):
+    def url(self) -> str:
         return self.__url
 
     @property
-    def headers(self):
+    def headers(self) -> dict[str, str]:
         return self.__headers
 
     def check_connected_status(self) -> None:
