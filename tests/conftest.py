@@ -1,11 +1,11 @@
 import pytest
 
-from src.get_vacancies_hh import HeadHunterAPI
+from src.get_vacancies import HeadHunterAPI
 
-@pytest.fixture
-def test_case():
-    """ Фикстура  """
-    return HeadHunterAPI("vacancies.json", 250, "")
+# @pytest.fixture
+# def test_case():
+#     """ Фикстура  """
+#     return HeadHunterAPI("vacancies.json", 250, "")
 
 @pytest.fixture
 def mock_response():

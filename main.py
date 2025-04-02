@@ -1,4 +1,4 @@
-from src.get_vacancies_hh import HeadHunterAPI, Vacancy
+from src.get_vacancies import HeadHunterAPI, Vacancy
 
 
 hh_api = HeadHunterAPI()

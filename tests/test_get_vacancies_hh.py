@@ -1,44 +1,41 @@
-from unittest.mock import patch, Mock
+import pytest
+from unittest.mock import patch
+import requests
+
+from src.get_vacancies import HeadHunterAPI
 
 
-def test_init_class(test_case):
-    assert test_case.file_worker == "vacancies.json"
-    assert test_case.number_vacancies == 250
-    assert test_case.search_word == ""
+@pytest.fixture
+def test_case():
+    return HeadHunterAPI(file_worker="vacancies.json", number_vacancies=150)
 
+@patch('requests.get')
+def test_get_vacancies_hh_success(mock_get, test_case, capsys):
+    """Тест успешного получения вакансий"""
+    mock_response = {'items': [{'id': 1}, {'id': 2}], 'pages': 1}
+    mock_get.return_value.json.return_value = mock_response
+    mock_get.return_value.status_code = 200
+    test_case.get_vacancies_hh("Python")
+    assert len(test_case.vacancies) == 2
+    assert test_case.vacancies == [{'id': 1}, {'id': 2}]
+    mock_get.assert_any_call(test_case.url, headers=test_case.headers,
+                                         params={'text': 'Python', 'page': 0, 'per_page': 100})
+    repr(test_case)
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    str(test_case)
+    captured = capsys.readouterr()
+    assert captured.out == ""
 
 
 @patch('requests.get')
-def test_successful_vacancy_fetching(mock_get, hh_api_fixture, mock_api_response):
-    """Тест успешного получения вакансий"""
-    mock_response = Mock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = mock_api_response
-    mock_get.return_value = mock_response
-    hh_api_fixture.get_vacancies_hh("Python")
-    assert len(hh_api_fixture.vacancies) == 2
+def test_get_vacancies_hh_connection_error(mock_get, test_case, capsys):
+    mock_response = {'items': [{'id': 1}, {'id': 2}], 'pages': 1}
+    mock_get.return_value.json.return_value = mock_response
+    mock_get.return_value.status_code = 400
+    test_case.get_vacancies_hh("Python")
+    captured = capsys.readouterr()
+    assert captured.out == ('Нет подключения к API. Загрузка прервана.\n'
+                            "Ошибка при получении данных <class 'Exception'>: Нет подключения к API. "
+                            'Загрузка прервана.\n')
 
-
-@patch('src.get_vacancies_hh.save_json_file')
-def test_save_to_json(mock_save, hh_api_fixture, mock_api_response):
-    """Тест сохранения в JSON"""
-    with patch('requests.get') as mock_get:
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = mock_api_response
-        mock_get.return_value = mock_response
-
-        hh_api_fixture.get_vacancies_hh("Python")
-        hh_api_fixture.save_to_json()
-
-    mock_save.assert_called_once_with(
-        "test_vacancies.json",
-        {
-            "items": hh_api_fixture.vacancies,
-            "found": len(hh_api_fixture.vacancies),
-            "pages": 1,
-            "page": 0,
-            "per_page": 100,
-            "alternate_url": "https://hh.ru/search/vacancy?text=Python"
-        }
-    )

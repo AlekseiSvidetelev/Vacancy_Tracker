@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any
 import requests
 import time
 from abc import ABC, abstractmethod
@@ -114,6 +114,9 @@ class HeadHunterAPI(VacancyAPI):
         """Сохранение полученных вакансий в JSON-файл"""
         filename = self.file_worker
         try:
+            if len(self.vacancies) == 0:
+                print("Список вакансий для записи пустой")
+                raise ValueError("Нет данных для записи")
             result = {
                 "items": self.vacancies,
                 "found": len(self.vacancies),
@@ -129,8 +132,8 @@ class HeadHunterAPI(VacancyAPI):
 
 
 if __name__ == "__main__":
-    hh_api = HeadHunterAPI("vacancies.json", 250)
-    hh_api.get_vacancies_hh("Python developer")
+    hh_api = HeadHunterAPI("vacancies.json", 109)
+    hh_api.get_vacancies_hh("Python")
     print(repr(hh_api))
     hh_api.save_to_json()
     print(str(hh_api))
