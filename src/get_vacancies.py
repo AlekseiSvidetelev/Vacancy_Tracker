@@ -81,6 +81,8 @@ class HeadHunterAPI(VacancyAPI):
             response = requests.get(self.url, headers=self.headers)
             if response.status_code == 200:
                 self.__connected_status = True
+            else:
+                raise ConnectionError
         except Exception as e:
             self.__connected_status = False
             print(f"Ошибка подключения: {e}")
