@@ -134,7 +134,7 @@ class HeadHunterAPI(VacancyAPI):
 
 
 if __name__ == "__main__":
-    hh_api = HeadHunterAPI("vacancies.json", 109)
+    hh_api = HeadHunterAPI("vacancies.json", 50)
     hh_api.get_vacancies_hh("Python")
     print(repr(hh_api))
     hh_api.save_to_json()
