@@ -36,13 +36,13 @@ class HeadHunterAPI(VacancyAPI):
 
     def __init__(self, file_worker: str, number_vacancies: int, search_word: str = ""):
         super().__init__(file_worker)
-        self.__vacancies: list[dict[str, Any]] = []
+        self.vacancies: list[dict[str, Any]] = []
         self.__file_worker = file_worker if file_worker else "vacancies.json"
         self.search_word = search_word
         self.number_vacancies = number_vacancies if number_vacancies else 100
         self.__connected_status = False
         self.__url = "https://api.hh.ru/vacancies"
-        self.__headers: dict[str, str] = {AGENT_HH_API: TOKEN_HH_API}
+        self.__headers: dict[str, str] = {'User-Agent': 'HH-User-Agent'}
         self.__params: Any = {"text": "", "page": 0, "per_page": 100}
 
     def __repr__(self) -> str:
@@ -57,10 +57,7 @@ class HeadHunterAPI(VacancyAPI):
     def __str__(self) -> str:
         return f"Найдено вакансий: {len(self.vacancies)}"
 
-    @property
-    def vacancies(self) -> list[dict[str, Any]]:
-        """Геттер для доступа к списку вакансий"""
-        return self.__vacancies
+
 
     @property
     def connected_status(self) -> bool:

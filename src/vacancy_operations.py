@@ -1,36 +1,53 @@
 from src.utils import read_json_file
+from src.utils import clean_search_teg
 
-
-class Vacancies:
-    """Класс для работы с вакансиями"""
+class Vacancy:
+    """Класс представления вакансии"""
 
     def __init__(
         self,
+        vacancy_id,
         name,
         area,
         salary,
         url,
         snippet_requirement,
         snippet_responsibility,
-        schedule,
-        work_format,
-        working_hours,
-        professional_roles,
-        work_schedule_by_days,
-        employment_form,
     ):
+        self.vacancy_id = vacancy_id
         self.name = name
         self.area = area
         self.salary = salary
         self.url = url
         self.snippet_requirement = snippet_requirement
         self.snippet_responsibility = snippet_responsibility
-        self.schedule = schedule
-        self.work_format = work_format
-        self.working_hours = working_hours
-        self.professional_roles = professional_roles
-        self.work_schedule_by_days = work_schedule_by_days
-        self.employment_form = employment_form
+
+
+    def __repr__(self):
+        return (f"[{self.vacancy_id}, {self.name}, {self.area}, {self.salary}, {self.url}, {self.snippet_requirement},"
+                f"{self.snippet_responsibility}]")
+
+
+    @property
+    def salary_from(self):
+        return self.salary.get("from", 0)
+    #
+    @property
+    def salary_to(self):
+        return self.salary.get("to", 0)
+
+class VacanciesList():
+    """ Класс для работы со списком вакансий """
+
+    vacancies: list
+
+    def __init__(self, vacancies=None):
+        self.__vacancies = vacancies if vacancies else []
+
+    def __repr__(self):
+        return f"{self.__vacancies}"
+
+
 
     @classmethod
     def converted_to_class(cls, file_path):
@@ -38,40 +55,33 @@ class Vacancies:
         vacancies = []
         data = read_json_file(file_path)
         for item in data.get("items", []):
-            name = item.get("name", "")
-            area = item.get("area", {}).get("name", "")
-            salary = item.get("salary", {})
-            url = item.get("alternate_url", "")
-            snippet_requirement = item.get("snippet", "").get("requirement")
-            snippet_responsibility = item.get("snippet", "").get("requirement")
-            schedule = item.get("schedule", {}).get("name", "")
-            work_format = item.get("work_format", [])
-            working_hours = item.get("working_hours", [])
-            professional_roles = item.get("professional_roles", [])
-            work_schedule_by_days = item.get("work_schedule_by_days", [])
-            employment_form = item.get("employment_form", {})
-
-            vacancy = cls(
-                name,
-                area,
-                salary,
-                url,
-                snippet_requirement,
-                snippet_responsibility,
-                schedule,
-                work_format,
-                working_hours,
-                professional_roles,
-                work_schedule_by_days,
-                employment_form,
+            vacancy = Vacancy(
+                vacancy_id = item.get("id"),
+                name = item.get("name", ""),
+                area = item.get("area", {}).get("name", ""),
+                salary = item.get("salary", {}),
+                url = item.get("alternate_url", ""),
+                snippet_requirement = clean_search_teg(item.get("snippet", "").get("requirement")),
+                snippet_responsibility = clean_search_teg(item.get("snippet", "").get("requirement")),
             )
+            print(item.get("salary"))
             vacancies.append(vacancy)
+        return cls(vacancies)
 
-        return vacancies
+
 
 
 
 
 if __name__ == "__main__":
-    res = repr(Vacancies.converted_to_class("vacancies.json"))
+
+    res = VacanciesList.converted_to_class("vacancies.json")
+
+    print("До сортировки")
     print(res)
+
+    res.sort_by_salary(False)
+    print("После сортировки")
+    print(res)
+
+

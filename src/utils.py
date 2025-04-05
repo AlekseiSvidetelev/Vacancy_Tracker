@@ -1,5 +1,6 @@
 import json
 import os.path
+import re
 from typing import Any
 
 from config import DATA_DIR
@@ -25,6 +26,14 @@ def read_json_file(filename_json: str) -> dict[str, Any]:
         return {}
 
 
+def clean_search_teg(update_string: str) -> str:
+    """ Очистка поисковых тегов <highlighttext> и </highlighttext>"""
+    clean_string = re.sub(r"<highlighttext>|</highlighttext>", "", update_string)
+    return clean_string
+
+
+
 if __name__ == "__main__":
     # save_json_file("vacancies.json", {})
-    read_json_file("vacancies.json")
+    # read_json_file("vacancies.json")
+    print(clean_search_teg("Практические навыки использования инструментов тестирования (Swagger, Postman, Fiddler/Charles, DevTools). Знакомство с Grafana. Знакомство с Kibana. Минимальные знания <highlighttext>Python</highlighttext>. ,Практические навыки использования инструментов тестирования (Swagger, Postman, Fiddler/Charles, DevTools). Знакомство с Grafana. Знакомство с Kibana. Минимальные знания <highlighttext>Python</highlighttext>."))
