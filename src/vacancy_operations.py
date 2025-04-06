@@ -1,4 +1,4 @@
-from src.utils import clean_search_teg, sort_vacancies, filter_vacancies
+from src.utils import clean_search_teg, sort_vacancies, filter_vacancies, get_top_vacancies, get_vacancies_by_salary
 
 
 
@@ -25,11 +25,21 @@ class Vacancy:
         self.snippet_requirement = snippet_requirement
         self.snippet_responsibility = snippet_responsibility
 
-    def __repr__(self):
-        return f"{self.salary_from}"
+
 
     def __lt__(self, other: "Vacancy") -> bool:
         return self.salary_from < other.salary_from
+
+    def __str__(self):
+        return (f"ID: {self.vacancy_id}\n"
+                f"Название вакансии: {self.name}\n"
+                f"Зарплата от: {self.salary_from}\n"
+                f"Местоположение: {self.area}\n"
+                f"Ссылка на вакансию: {self.url}\n"
+                f"Описание: {self.snippet_requirement}\n{self.snippet_responsibility}\n-------")
+
+    def __repr__(self):
+        return f"{self.salary_from}"
 
     @classmethod
     def cast_to_object_list(cls, object_list):
@@ -2238,4 +2248,14 @@ if __name__ == "__main__":
     # print(repr(res))
     res_filtered = filter_vacancies(res_sort, ["Внимател", "мох"])
     print(res_filtered)
+    res_top = get_top_vacancies(res_filtered, 2)
+    print(res_top)
+    res_range = get_vacancies_by_salary(vacancies_list, "60000 - 100000")
+    print(res_range)
+    res_range = get_vacancies_by_salary(vacancies_list, "60000")
+    print(res_range)
+    res_range = get_vacancies_by_salary(vacancies_list)
+    print(res_range)
+
+
 

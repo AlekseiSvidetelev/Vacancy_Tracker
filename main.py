@@ -27,36 +27,45 @@ from src.utils import filter_vacancies, sort_vacancies, get_vacancies_by_salary,
 
     # Функция для взаимодействия с пользователем
 def user_interaction():
-    platforms = ["HeadHunter"]
-    search_query = input(f"Введите поисковый запрос {platforms}: ")
-    print("Выполняется поиск. Ждите...")
-    hh_api = HeadHunterAPI()
-    hh_vacancies = hh_api.get_vacancies(search_query)
-    # time.sleep()
-    top_n = int(input("Введите количество вакансий для вывода в топ N: "))
-    filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
-    print(filter_words)
-    salary_range = input("Введите диапазон зарплат (Пример: 100000 - 150000): ") # Пример: 100000 - 150000
+    """ Функция для взаимодействия с пользователем """
+    try:
+        platforms = ["HeadHunter"]
+        search_query = input(f"Введите поисковый запрос {platforms}: ")
+        print("Выполняется поиск. Ждите...")
+        hh_api = HeadHunterAPI()
+        hh_vacancies = hh_api.get_vacancies(search_query)
+        if not hh_vacancies:
+            raise ValueError("Вакансий с заданными параметрами не найдено")
+        vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
+        print(f"Найдено вакансий: {len(vacancies_list)}.")
 
+        filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
+        filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
 
-    vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
+        if not filtered_vacancies:
+            raise ValueError("Вакансий с заданными параметрами не найдено")
+        print(f"Количество вакансий под ключевые критерии: {len(filtered_vacancies)}")
+        salary_range = input("Введите диапазон зарплат (Пример: 100000 - 150000): ") # Пример: 100000 - 150000
+        ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
+        if not ranged_vacancies:
+            raise ValueError("Вакансий с заданными параметрами не найдено")
+        sorted_vacancies = sort_vacancies(ranged_vacancies)
+        top_n = int(input("Введите количество вакансий для вывода в топ N: "))
+        top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
+        if not top_vacancies:
+            raise ValueError("Вакансий с заданными параметрами не найдено")
+        for vacancy in top_vacancies:
+            print(vacancy)
 
-    filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
-
-
-    ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
-
-    sorted_vacancies = sort_vacancies(ranged_vacancies)
-    top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
-    print(top_vacancies)
-
-    save_vacancies = input("Сохранить вакансии в файл? ДА/НЕТ")
+        save_vacancies = input("Сохранить вакансии в файл? ДА/НЕТ")
         # if save_vacancies.lower() == "да":
         #     json_saver = JSONSaver()
         #     json_saver.add_vacancy(vacancy)
-        #     json_saver.delete_vacancy(vacancy)
-        # else:
-        #     pass
+        #     print("Данные записаны в файл")
+
+    except Exception as e:
+        print(f"{Exception}: {e}")
+
 
 
 

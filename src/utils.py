@@ -6,25 +6,6 @@ from typing import Any
 from config import DATA_DIR
 
 
-def save_json_file(filename_json: str, vacancies: dict[str, Any]) -> None:
-    """Функция для записи данных в JSON файла"""
-    try:
-        with open(os.path.join(DATA_DIR, filename_json), "w", encoding="utf-8") as f:
-            json.dump(vacancies, f, ensure_ascii=False, indent=4)
-    except Exception as e:
-        print(f"Ошибка при сохранении файла: {e}")
-
-
-def read_json_file(filename_json: str) -> dict[str, Any]:
-    """Функция для чтения JSON файла в список"""
-    try:
-        with open(os.path.join(DATA_DIR, filename_json), "r", encoding="utf-8") as file:
-            data = json.load(file)
-        return data
-    except Exception as e:
-        print(f"Ошибка при чтении файла {Exception}: {e} ")
-        return {}
-
 
 def clean_search_teg(update_string: str) -> str:
     """Очистка поисковых тегов <highlighttext> и </highlighttext>"""
@@ -52,29 +33,41 @@ def filter_vacancies(object_list, filtered_word_list):
             responsibility = str(object_vacancy.snippet_responsibility).lower()
             if pattern.search(requirement) or pattern.search(responsibility):
                 filtered_object_list.append(object_vacancy)
-            if not filtered_object_list:
-                print("Нет вакансий под заданные критерии")
         return filtered_object_list
     except Exception as e:
         print(f"Ошибка фильтрации {Exception}: {e}")
         return []
 
 
-def get_vacancies_by_salary(filtered_vacancies, salary_range):
+def get_vacancies_by_salary(filtered_vacancies, salary_range=None):
     """ Функция для фильтрации вакансий по диапазону """
-    pass
+    if salary_range is None:
+        print("Критерии диапазона выборки не заданы")
+        return filtered_vacancies
+    try:
+        parts = salary_range.replace(" ", "").split("-")
+        lower_salary = int(parts[0])
+        upper_salary = int(parts[1]) if len(parts) > 1 else None
+        if upper_salary is None:
+            return [vacancy for vacancy in filtered_vacancies if
+                    lower_salary <= vacancy.salary_from]
+        filtered_object_list = [vacancy for vacancy in filtered_vacancies if (
+                    lower_salary <= vacancy.salary_from <= upper_salary)]
+        return filtered_object_list
+    except Exception as e:
+        print(f"Ошибка {Exception} при попытке получения выборки: {e}")
+        return []
 
 
 def get_top_vacancies(sorted_vacancies, top_n):
-    """ Функция для выборки тов пакансий """
-    pass
-
-
-
-
-
-
-
+    """ Функция для выборки Топ-N вакансий """
+    try:
+        if type(top_n) != int:
+            raise ValueError("Значение должно быть целым числом")
+        return sorted_vacancies[:top_n]
+    except Exception as e:
+        print(f"Ошибка {Exception} формирования топ - {top_n} вакансий: {e}")
+        return []
 
 
 
