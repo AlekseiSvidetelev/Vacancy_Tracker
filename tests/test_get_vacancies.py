@@ -32,8 +32,7 @@ def test_class_hh_exception(mock_requests_get, capsys):
 
     assert hh_api.vacancies == []
     captured = capsys.readouterr()
-    assert captured.out == (
-        "Нет соединения с сервисом API для получения данных\n"
-        "Ошибка при получении вакансий: Нет соединения с сервисом API для получения "
-        "данных\n"
-    )
+    assert captured.out == ('Нет соединения с сервисом API для получения данных\n'
+                         "Ошибка <class 'Exception'>: Нет соединения с сервисом API для получения "
+                         'данных\n'
+                         "Ошибка при получении вакансий: 'NoneType' object has no attribute 'json'\n")
