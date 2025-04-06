@@ -77,6 +77,18 @@ class Vacancy:
             vacancies_object.append(vacancy)
         return vacancies_object
 
+    def to_dict(self):
+        """ Метод предоставления объекта вакансии в виде словаря """
+        return {
+            "id" : self.vacancy_id,
+            "name" : self.name,
+            "area" : self.area,
+            "salary_from" : self.salary_from,
+            "url" : self.url,
+            "snippet_requirement" : self.snippet_requirement,
+            "snippet_responsibility" : self.snippet_responsibility,
+        }
+
 
 if __name__ == "__main__":
     list_vacancies = [
@@ -2250,12 +2262,15 @@ if __name__ == "__main__":
     print(res_filtered)
     res_top = get_top_vacancies(res_filtered, 2)
     print(res_top)
-    res_range = get_vacancies_by_salary(vacancies_list, "60000 - 100000")
-    print(res_range)
-    res_range = get_vacancies_by_salary(vacancies_list, "60000")
-    print(res_range)
+    # res_range = get_vacancies_by_salary(vacancies_list, "60000 - 100000")
+    # print(res_range)
+    # res_range = get_vacancies_by_salary(vacancies_list, "60000")
+    # print(res_range)
     res_range = get_vacancies_by_salary(vacancies_list)
     print(res_range)
+
+
+
 
 
 

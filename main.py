@@ -56,12 +56,9 @@ def user_interaction():
             raise ValueError("Вакансий с заданными параметрами не найдено")
         for vacancy in top_vacancies:
             print(vacancy)
-
-        save_vacancies = input("Сохранить вакансии в файл? ДА/НЕТ")
-        # if save_vacancies.lower() == "да":
-        #     json_saver = JSONSaver()
-        #     json_saver.add_vacancy(vacancy)
-        #     print("Данные записаны в файл")
+            json_saver = JSONSaver()
+            json_saver.save_to_file(vacancy)
+            print("Данные записаны в файл")
 
     except Exception as e:
         print(f"{Exception}: {e}")
