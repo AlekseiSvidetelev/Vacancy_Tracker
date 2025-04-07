@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
@@ -14,70 +15,79 @@ class Saver(ABC):
 
     @abstractmethod
     def __init__(self, file_name):
-        self.__file_name = file_name
+        self.file_name = file_name
 
+    @property
+    @abstractmethod
+    def file_name(self) -> str:
+        pass
+
+    @file_name.setter
+    @abstractmethod
+    def file_name(self, value: str) -> None:
+        pass
 
     @abstractmethod
-    def read_to_file(self, file_name: str):
+    def read_from_file(self, file_name: str) -> list[dict[str, Any]]:
         pass
 
     @abstractmethod
     def save_to_file(self, vacancy: Vacancy) -> None:
         pass
 
-    @property
-    def file_name(self):
-        return self.__file_name
 
-    @file_name.setter
-    def file_name(self, value):
-        self.__file_name = value
 
 
 class JSONSaver(Saver):
 
-    def __init__(self, file_name = ""):
-        super().__init__(file_name if file_name else "vacancies.json")
-        self.__file_name = file_name if file_name else "vacancies.json"
+    def __init__(self, file_name: str = None):
+        super().__init__(file_name)
+        self.file_name = file_name if file_name else "vacancies.json"
+
+    def __repr__(self):
+        return self.file_name
 
     @property
-    def file_name(self):
+    def file_name(self) -> str:
         return self.__file_name
 
     @file_name.setter
     def file_name(self, new_file_name: str) -> None:
         try:
-            if new_file_name[-5:]  == ".json":
-                print("Необходимо создать название файла с расширением '.json'")
-                raise ValueError("Неправильный формат файла")
-            self.__file_name = new_file_name
+            clean_word = re.sub(r'[<>:"/\\|?*]', '', new_file_name)
+            # print(clean_word)
+            replace_spase = clean_word.replace(" ", "_")
+            # print(replace_spase)
+            parts_name = replace_spase.split(".")
+            # print(parts_name)
+            if parts_name[-1:]  == "json":
+                self.__file_name = ".".join(parts_name)
+            else:
+                self.__file_name = parts_name[0] + ".json"
         except Exception as e:
             print(f"Ошибка {Exception}: {e}")
 
-    def read_to_file(self, file_name: str) -> dict[str, Any]:
-        """Функция для чтения JSON файла в список"""
+
+
+    def read_from_file(self, file_name: str) -> list[dict[str, Any]]:
+        """Функция для чтения JSON файла"""
         try:
-            with open(os.path.join(DATA_DIR, self.__file_name), "r", encoding="utf-8") as f:
+            if not os.path.join(DATA_DIR, file_name):
+                return []
+            with open(os.path.join(DATA_DIR, self.file_name), "r", encoding="utf-8") as f:
                 data = json.load(f)
             return data
         except Exception as e:
             print(f"Ошибка при чтении файла {Exception}: {e} ")
-            return {}
+            return []
+
 
     def save_to_file(self, vacancy: Vacancy) -> None:
         """Функция для записи данных в JSON файл"""
         try:
-            print(self.__file_name)
             if not isinstance(vacancy, Vacancy):
                 raise TypeError("В категорию можно добавлять только объекты класса Vacancy или его наследников")
-            Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
-            if not os.path.exists(self.__file_name):
-                with open(os.path.join(DATA_DIR, self.__file_name), "w", encoding="utf-8") as f:
-                    json.dumps(f)
-            with open(os.path.join(DATA_DIR, self.__file_name), "r", encoding="utf-8") as f:
-                old_vacancies = json.load(f)
-            if not old_vacancies:
-                old_vacancies = []
+            old_vacancies = self.read_from_file(self.file_name)
             new_vacancy = vacancy.to_dict()
             for old_vacancy in old_vacancies:
                 if old_vacancy["id"] == new_vacancy["id"]:
@@ -88,3 +98,14 @@ class JSONSaver(Saver):
         except Exception as e:
             print(f"Ошибка {Exception} при добавлении вакансии в файл: {e}")
 
+if __name__ == "__main__":
+    saver = JSONSaver("vac")
+    print(saver)
+    saver.file_name = "file.txt"
+    print(saver.file_name)
+    saver.file_name = "filesefd.refl.erfe"
+    print(saver.file_name)
+    saver.file_name = "file.rtg"
+    print(saver.file_name)
+    saver.file_name = "file><jg"
+    print(saver.file_name)
