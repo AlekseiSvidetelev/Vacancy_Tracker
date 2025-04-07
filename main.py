@@ -54,11 +54,10 @@ def user_interaction():
         top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
         if not top_vacancies:
             raise ValueError("Вакансий с заданными параметрами не найдено")
+        json_saver = JSONSaver()
         for vacancy in top_vacancies:
             print(vacancy)
-            json_saver = JSONSaver()
             json_saver.save_to_file(vacancy)
-            print("Данные записаны в файл")
 
     except Exception as e:
         print(f"{Exception}: {e}")

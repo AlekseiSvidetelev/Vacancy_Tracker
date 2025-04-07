@@ -6,7 +6,6 @@ from typing import Any
 from config import DATA_DIR
 
 
-
 def clean_search_teg(update_string: str) -> str:
     """Очистка поисковых тегов <highlighttext> и </highlighttext>"""
     clean_string = re.sub(r"<highlighttext>|</highlighttext>", "", update_string)
@@ -14,7 +13,7 @@ def clean_search_teg(update_string: str) -> str:
 
 
 def sort_vacancies(list_object, reverse=True):
-    """ Функция для фильтрации списка объектов вакансий """
+    """Функция для фильтрации списка объектов вакансий"""
     try:
         sort_list_object = sorted(list_object, key=lambda x: x.salary_from, reverse=reverse)
         return sort_list_object
@@ -23,11 +22,11 @@ def sort_vacancies(list_object, reverse=True):
 
 
 def filter_vacancies(object_list, filtered_word_list):
-    """ Функция для фильтрации списка объектов вакансий по слову в описании """
+    """Функция для фильтрации списка объектов вакансий по слову в описании"""
 
     try:
         filtered_object_list = []
-        pattern = re.compile('|'.join(re.escape(word) for word in filtered_word_list), flags=re.IGNORECASE)
+        pattern = re.compile("|".join(re.escape(word) for word in filtered_word_list), flags=re.IGNORECASE)
         for object_vacancy in object_list:
             requirement = str(object_vacancy.snippet_requirement).lower()
             responsibility = str(object_vacancy.snippet_responsibility).lower()
@@ -40,7 +39,7 @@ def filter_vacancies(object_list, filtered_word_list):
 
 
 def get_vacancies_by_salary(filtered_vacancies, salary_range=None):
-    """ Функция для фильтрации вакансий по диапазону """
+    """Функция для фильтрации вакансий по диапазону"""
     if salary_range is None:
         print("Критерии диапазона выборки не заданы")
         return filtered_vacancies
@@ -49,10 +48,10 @@ def get_vacancies_by_salary(filtered_vacancies, salary_range=None):
         lower_salary = int(parts[0])
         upper_salary = int(parts[1]) if len(parts) > 1 else None
         if upper_salary is None:
-            return [vacancy for vacancy in filtered_vacancies if
-                    lower_salary <= vacancy.salary_from]
-        filtered_object_list = [vacancy for vacancy in filtered_vacancies if (
-                    lower_salary <= vacancy.salary_from <= upper_salary)]
+            return [vacancy for vacancy in filtered_vacancies if lower_salary <= vacancy.salary_from]
+        filtered_object_list = [
+            vacancy for vacancy in filtered_vacancies if (lower_salary <= vacancy.salary_from <= upper_salary)
+        ]
         return filtered_object_list
     except Exception as e:
         print(f"Ошибка {Exception} при попытке получения выборки: {e}")
@@ -60,7 +59,7 @@ def get_vacancies_by_salary(filtered_vacancies, salary_range=None):
 
 
 def get_top_vacancies(sorted_vacancies, top_n):
-    """ Функция для выборки Топ-N вакансий """
+    """Функция для выборки Топ-N вакансий"""
     try:
         if type(top_n) != int:
             raise ValueError("Значение должно быть целым числом")
@@ -68,7 +67,6 @@ def get_top_vacancies(sorted_vacancies, top_n):
     except Exception as e:
         print(f"Ошибка {Exception} формирования топ - {top_n} вакансий: {e}")
         return []
-
 
 
 if __name__ == "__main__":
