@@ -43,7 +43,7 @@ class JSONSaver(Saver):
 
     def __init__(self, file_name: str = None):
         super().__init__(file_name)
-        self.file_name = file_name if file_name else "vacancies.json"
+        self.file_name = file_name
 
     def __repr__(self):
         return f"{self.file_name}"
@@ -55,6 +55,8 @@ class JSONSaver(Saver):
     @file_name.setter
     def file_name(self, new_file_name: str) -> None:
         try:
+            if new_file_name is None:
+                new_file_name = "vacancies.json"
             clean_word = re.sub(r'[<>:"/\\|?*]', "", new_file_name)
             replace_spase = clean_word.replace(" ", "_")
             parts_name = replace_spase.split(".")
@@ -74,24 +76,24 @@ class JSONSaver(Saver):
             print(f"Ошибка при чтении файла {Exception}: {e} ")
             return []
 
+
     def save_to_file(self, vacancy: Vacancy) -> None:
         """Функция для записи данных в JSON файл"""
         try:
             if not isinstance(vacancy, Vacancy):
                 raise TypeError("В файл можно добавлять только объекты класса Vacancy или его наследников")
-            old_vacancies = self.read_from_file(self.file_name)
+            old_vacancies:list[dict[str:Any]] = self.read_from_file(self.file_name)
             new_vacancy = vacancy.to_dict()
-            if old_vacancies == []:
-                with open(os.path.join(DATA_DIR, self.file_name), "w", encoding="utf-8") as f:
-                    json.dump(old_vacancies, f, ensure_ascii=False, indent=4)
-            for old_vacancy in old_vacancies:
-                if old_vacancy["id"] == new_vacancy["id"]:
-                    return
-                old_vacancies.append(new_vacancy)
+            # print(new_vacancy)
+            if old_vacancies is not None:
+                for old_vacancy in old_vacancies:
+                    if old_vacancy["id"] == new_vacancy["id"]:
+                        return
+            old_vacancies.append(new_vacancy)
             with open(os.path.join(DATA_DIR, self.file_name), "w", encoding="utf-8") as f:
                 json.dump(old_vacancies, f, ensure_ascii=False, indent=4)
         except Exception as e:
-            print(f"Ошибка {Exception} при добавлении вакансии в файл: {e}")
+            print(f"Ошибка при добавлении вакансии в файл: {e}")
 
     def deleting_from_file(self, vacancy: Vacancy) -> None:
         """Функция для записи данных в JSON файл"""
@@ -112,6 +114,7 @@ class JSONSaver(Saver):
 if __name__ == "__main__":
     saver = JSONSaver("vac.json")
     print(saver)
+
     # saver.file_name = "file.txt"
     # print(saver.file_name)
     # saver.file_name = "filesefd.refl.erfe"

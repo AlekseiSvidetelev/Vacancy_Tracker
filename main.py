@@ -38,10 +38,8 @@ def user_interaction():
             raise ValueError("Вакансий с заданными параметрами не найдено")
         vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
         print(f"Найдено вакансий: {len(vacancies_list)}.")
-
         filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
         filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
-
         if not filtered_vacancies:
             raise ValueError("Вакансий с заданными параметрами не найдено")
         print(f"Количество вакансий под ключевые критерии: {len(filtered_vacancies)}")
@@ -56,11 +54,10 @@ def user_interaction():
             raise ValueError("Вакансий с заданными параметрами не найдено")
         json_saver = JSONSaver()
         for vacancy in top_vacancies:
-            print(vacancy)
             json_saver.save_to_file(vacancy)
-
+            print(vacancy)
     except Exception as e:
-        print(f"{Exception}: {e}")
+        print(f"Ошибка работы программы: {e}")
 
 
 

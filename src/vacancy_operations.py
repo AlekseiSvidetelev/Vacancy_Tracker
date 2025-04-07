@@ -55,15 +55,15 @@ class Vacancy:
                 salary_from = item.get("salary").get("from")
                 if salary_from is None:
                     salary_from = 0
-            url = (item.get("alternate_url", ""),)
+            url = item.get("alternate_url", "")
             if item.get("snippet", "").get("requirement") is None:
-                snippet_requirement = None
+                snippet_requirement = "Нет описания"
             else:
-                snippet_requirement = (clean_search_teg(item.get("snippet", "").get("requirement")),)
+                snippet_requirement = item.get("snippet", "").get("requirement")
             if item.get("snippet", "").get("requirement") is None:
-                snippet_responsibility = None
+                snippet_responsibility = "Нет описания"
             else:
-                snippet_responsibility = clean_search_teg(item.get("snippet", "").get("requirement"))
+                snippet_responsibility = item.get("snippet", "").get("requirement")
             vacancy = cls(
                 vacancy_id=vacancy_id,
                 name=name,
@@ -83,8 +83,8 @@ class Vacancy:
             "name": self.name,
             "area": self.area,
             "salary_from": self.salary_from,
-            "url": self.url,
-            "snippet_requirement": self.snippet_requirement,
+            "url": self.url, #[0] if isinstance(self.url, tuple) else self.url,
+            "snippet_requirement": self.snippet_requirement, #[0] if isinstance(self.url, tuple) else self.snippet_requirement,
             "snippet_responsibility": self.snippet_responsibility,
         }
 

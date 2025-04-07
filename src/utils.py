@@ -11,6 +11,9 @@ def clean_search_teg(update_string: str) -> str:
     clean_string = re.sub(r"<highlighttext>|</highlighttext>", "", update_string)
     return clean_string
 
+# def update_tuple_in_str(update_string: str)
+
+
 
 def sort_vacancies(list_object, reverse=True):
     """Функция для фильтрации списка объектов вакансий"""

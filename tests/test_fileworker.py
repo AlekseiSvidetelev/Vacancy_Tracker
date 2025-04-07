@@ -1,42 +1,38 @@
+import json
+import os
+
+from config import DATA_DIR
 from src.fileworker import JSONSaver
 
 from src.vacancy_operations import Vacancy
 
-def test_class_jsonsaver(test_list_hh):
+def test_class_jsonsaver(test_list_hh, test_data):
     vacancy_list = Vacancy.cast_to_object_list(test_list_hh)
-    res_1 = JSONSaver("vacancies_test")
-    assert res_1.file_name == 'vacancies_test.json'
-    res_2 = JSONSaver("test")
-    assert res_2.file_name == "test.json"
-    assert repr(res_2) == "test.json"
+    file_name = "vacancies.json"
+    res_1 = JSONSaver()
+    assert res_1.file_name == file_name
+    assert repr(res_1) == file_name
     for vacavcy in vacancy_list:
         res_1.save_to_file(vacavcy)
+    with open(os.path.join(DATA_DIR, file_name), 'r', encoding='utf-8') as f:
+        loaded_data = json.load(f)
+    assert loaded_data == test_data, "Данные в файле не соответствуют ожидаемым"
+    for vacavcy in vacancy_list:
+        res_1.deleting_from_file(vacavcy)
+    with open(os.path.join(DATA_DIR, file_name), 'r', encoding='utf-8') as f:
+        loaded_data = json.load(f)
+    assert loaded_data == []
 
-        # Проверка существования файла
-        # assert file_path.exists(), "Файл не был создан"
+def test_exception_add(test_list_hh, capsys):
+    res_1 = JSONSaver()
+    res_1.save_to_file("123")
+    captured = capsys.readouterr()
+    assert captured.out == ("Ошибка при добавлении вакансии в файл: В файл можно "
+                            'добавлять только объекты класса Vacancy или его наследников\n')
 
-        # # Проверка содержимого файла
-        # with open(file_path, 'r', encoding='utf-8') as f:
-        #     loaded_data = json.load(f)
-        #
-        # assert loaded_data == test_data, "Данные в файле не соответствуют ожидаемым"
-
-
-
-# def test_write_json_to_file(tmp_path: Path):
-#     # Подготовка тестовых данных
-#     test_data = {"name": "Alice", "age": 30, "hobbies": ["reading", "travel"]}
-#     file_path = tmp_path / "test_data.json"
-#
-#     # Вызов тестируемой функции
-#     JSONSaver.save_to_file(test_data, file_path)
-#
-#     # Проверка существования файла
-#     assert file_path.exists(), "Файл не был создан"
-#
-#     # Проверка содержимого файла
-#     with open(file_path, 'r', encoding='utf-8') as f:
-#         loaded_data = json.load(f)
-#
-#     assert loaded_data == test_data, "Данные в файле не соответствуют ожидаемым"
-
+def test_exception_del(test_list_hh, capsys):
+    res_1 = JSONSaver()
+    res_1.deleting_from_file("123")
+    captured = capsys.readouterr()
+    assert captured.out == ('Ошибка при удалении вакансии: В файле можно удалять только объекты класса '
+                            'Vacancy или его наследников\n')

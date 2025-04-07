@@ -71,6 +71,6 @@ class HeadHunterAPI(VacancyAPI):
 if __name__ == "__main__":
     hh = HeadHunterAPI()
     res = hh.get_vacancies("тестировщик")
-    # print(res)
-    # print(hh)
+    print(res)
+    print(hh)
     print(repr(hh))
