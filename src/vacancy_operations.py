@@ -34,7 +34,7 @@ class Vacancy:
             f"Зарплата от: {'не указана' if self.salary_from == 0 else self.salary_from}\n"
             f"Местоположение: {self.area}\n"
             f"Ссылка на вакансию: {self.url}\n"
-            f"Описание: {self.snippet_requirement}\n{self.snippet_responsibility}\n-------"
+            f"Описание: {clean_search_teg(self.snippet_requirement)}\n{clean_search_teg(self.snippet_responsibility)}\n-------"
         )
 
     def __repr__(self):
@@ -43,38 +43,43 @@ class Vacancy:
     @classmethod
     def cast_to_object_list(cls, object_list):
         """Преобразование JSON файла в объект класса"""
-        vacancies_object = []
-        for item in object_list:
-            vacancy_id = item.get("id")
-            name = item.get("name", "")
-            area = item.get("area").get("name", "")
-            salary = item.get("salary")
-            if salary is None:
-                salary_from = 0
-            else:
-                salary_from = item.get("salary").get("from")
-                if salary_from is None:
+        try:
+            if not isinstance(object_list, list) or not all(isinstance(item, dict) for item in object_list):
+                raise ValueError("Ожидается список словарей")
+            vacancies_object = []
+            for item in object_list:
+                vacancy_id = item.get("id")
+                name = item.get("name", "")
+                area = item.get("area").get("name", "")
+                salary = item.get("salary")
+                if salary is None:
                     salary_from = 0
-            url = item.get("alternate_url", "")
-            if item.get("snippet", "").get("requirement") is None:
-                snippet_requirement = "Нет описания"
-            else:
-                snippet_requirement = item.get("snippet", "").get("requirement")
-            if item.get("snippet", "").get("requirement") is None:
-                snippet_responsibility = "Нет описания"
-            else:
-                snippet_responsibility = item.get("snippet", "").get("requirement")
-            vacancy = cls(
-                vacancy_id=vacancy_id,
-                name=name,
-                area=area,
-                salary_from=salary_from,
-                url=url,
-                snippet_requirement=snippet_requirement,
-                snippet_responsibility=snippet_responsibility,
-            )
-            vacancies_object.append(vacancy)
-        return vacancies_object
+                else:
+                    salary_from = item.get("salary").get("from")
+                    if salary_from is None:
+                        salary_from = 0
+                url = item.get("alternate_url", "")
+                if item.get("snippet", "").get("requirement") is None:
+                    snippet_requirement = "Нет описания"
+                else:
+                    snippet_requirement = item.get("snippet", "").get("requirement")
+                if item.get("snippet", "").get("requirement") is None:
+                    snippet_responsibility = "Нет описания"
+                else:
+                    snippet_responsibility = item.get("snippet", "").get("requirement")
+                vacancy = cls(
+                    vacancy_id=vacancy_id,
+                    name=name,
+                    area=area,
+                    salary_from=salary_from,
+                    url=url,
+                    snippet_requirement=snippet_requirement,
+                    snippet_responsibility=snippet_responsibility,
+                )
+                vacancies_object.append(vacancy)
+            return vacancies_object
+        except Exception as e:
+            print(f"Ошибка преобразования из JSON файла: {e}")
 
     def to_dict(self):
         """Метод предоставления объекта вакансии в виде словаря"""
@@ -84,8 +89,8 @@ class Vacancy:
             "area": self.area,
             "salary_from": self.salary_from,
             "url": self.url, #[0] if isinstance(self.url, tuple) else self.url,
-            "snippet_requirement": self.snippet_requirement, #[0] if isinstance(self.url, tuple) else self.snippet_requirement,
-            "snippet_responsibility": self.snippet_responsibility,
+            "snippet_requirement": clean_search_teg(self.snippet_requirement), #[0] if isinstance(self.url, tuple) else self.snippet_requirement,
+            "snippet_responsibility": clean_search_teg(self.snippet_responsibility),
         }
 
 

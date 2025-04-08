@@ -84,7 +84,6 @@ class JSONSaver(Saver):
                 raise TypeError("В файл можно добавлять только объекты класса Vacancy или его наследников")
             old_vacancies:list[dict[str:Any]] = self.read_from_file(self.file_name)
             new_vacancy = vacancy.to_dict()
-            # print(new_vacancy)
             if old_vacancies is not None:
                 for old_vacancy in old_vacancies:
                     if old_vacancy["id"] == new_vacancy["id"]:

@@ -43,7 +43,7 @@ def user_interaction():
         if not filtered_vacancies:
             raise ValueError("Вакансий с заданными параметрами не найдено")
         print(f"Количество вакансий под ключевые критерии: {len(filtered_vacancies)}")
-        salary_range = input("Введите диапазон зарплат (Пример: 100000 - 150000): ") # Пример: 100000 - 150000
+        salary_range = input("Введите диапазон зарплат (Пример: '100000 - 150000' или '100000'): ") # Пример: 100000 - 150000
         ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
         if not ranged_vacancies:
             raise ValueError("Вакансий с заданными параметрами не найдено")
