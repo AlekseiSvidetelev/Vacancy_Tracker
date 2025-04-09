@@ -1,7 +1,8 @@
-from typing import Any
-import requests
 import time
 from abc import ABC, abstractmethod
+from typing import Any
+
+import requests
 
 
 class VacancyAPI(ABC):
@@ -30,15 +31,19 @@ class HeadHunterAPI(VacancyAPI):
         self.__base_url = "https://api.hh.ru/vacancies"
         self.__headers = {"User-Agent": "HH-User-Agent"}
         self.__params = {"text": "", "page": 0, "per_page": 100}
-        self.__request_time = 0
+        self.__request_time: float = 0.0
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}. Получено вакансий: {len(self.vacancies)}, Время запроса: {self.__request_time}"
+        return (
+            f"{self.__class__.__name__}. "
+            f"Получено вакансий: {len(self.vacancies)}, "
+            f"Время запроса: {self.__request_time}"
+        )
 
     def __str__(self) -> str:
         return f"{self.vacancies}"
 
-    def connect(self, __params: dict) -> Any:
+    def connect(self, __params: dict[Any, Any]) -> requests.Response:
         """Метод для подключения к API"""
         try:
             response = requests.get(self.__base_url, headers=self.__headers, params=self.__params)
@@ -47,7 +52,7 @@ class HeadHunterAPI(VacancyAPI):
                 raise ConnectionError("Нет соединения с сервисом API для получения данных")
             return response
         except Exception as e:
-            print(f"Ошибка {Exception}: {e}")
+            print(f"Ошибка подключения к API: {e}")
 
     def get_vacancies(self, keyword: str) -> list[dict[str, Any]]:
         """Основной метод для получения вакансий из items"""

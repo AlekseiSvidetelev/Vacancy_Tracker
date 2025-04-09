@@ -2,7 +2,7 @@ import json
 import os
 import re
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 from config import DATA_DIR
 from src.vacancy_operations import Vacancy
@@ -13,35 +13,41 @@ class Saver(ABC):
     file_name: str
 
     @abstractmethod
-    def __init__(self, file_name):
-        self.file_name = file_name
+    def __init__(self, file_name: Optional[str] = None):
+        """Инициализация объекта с указанием имени файла"""
+        self._file_name = file_name
 
     @property
     @abstractmethod
     def file_name(self) -> str:
+        """Геттер для получения имени файла."""
         pass
 
     @file_name.setter
     @abstractmethod
     def file_name(self, value: str) -> None:
+        """Сеттер для изменения имени файла"""
         pass
 
     @abstractmethod
     def read_from_file(self, file_name: str) -> list[dict[str, Any]]:
+        """Чтение данных из файла"""
         pass
 
     @abstractmethod
     def save_to_file(self, vacancy: Vacancy) -> None:
+        """Чтение данных из файла"""
         pass
 
     @abstractmethod
     def deleting_from_file(self, vacancy: Vacancy) -> None:
+        """Запись вакансии в файл"""
         pass
 
 
 class JSONSaver(Saver):
 
-    def __init__(self, file_name: str = None):
+    def __init__(self, file_name: Optional[str] = None):
         super().__init__(file_name)
         self.file_name = file_name
 
@@ -76,13 +82,12 @@ class JSONSaver(Saver):
             print(f"Ошибка при чтении файла {Exception}: {e} ")
             return []
 
-
     def save_to_file(self, vacancy: Vacancy) -> None:
         """Функция для записи данных в JSON файл"""
         try:
             if not isinstance(vacancy, Vacancy):
                 raise TypeError("В файл можно добавлять только объекты класса Vacancy или его наследников")
-            old_vacancies:list[dict[str:Any]] = self.read_from_file(self.file_name)
+            old_vacancies = self.read_from_file(self.file_name)
             new_vacancy = vacancy.to_dict()
             if old_vacancies is not None:
                 for old_vacancy in old_vacancies:

@@ -1,20 +1,28 @@
-from src.utils import clean_search_teg, sort_vacancies, filter_vacancies, get_top_vacancies, get_vacancies_by_salary
+from src.utils import clean_search_teg
 
 
 class Vacancy:
     """Класс представления вакансии"""
 
+    vacancy_id: int
+    name: str
+    area: str
+    salary_from: int
+    url: str
+    snippet_requirement: str
+    snippet_responsibility: str
+
     __slots__ = ("vacancy_id", "name", "area", "salary_from", "url", "snippet_requirement", "snippet_responsibility")
 
     def __init__(
         self,
-        vacancy_id,
-        name,
-        area,
-        salary_from,
-        url,
-        snippet_requirement,
-        snippet_responsibility,
+        vacancy_id: int,
+        name: str,
+        area: str,
+        salary_from: int,
+        url: str,
+        snippet_requirement: str,
+        snippet_responsibility: str,
     ):
         self.vacancy_id = vacancy_id
         self.name = name
@@ -27,17 +35,18 @@ class Vacancy:
     def __lt__(self, other: "Vacancy") -> bool:
         return self.salary_from < other.salary_from
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"ID: {self.vacancy_id}\n"
             f"Название вакансии: {self.name}\n"
             f"Зарплата от: {'не указана' if self.salary_from == 0 else self.salary_from}\n"
             f"Местоположение: {self.area}\n"
             f"Ссылка на вакансию: {self.url}\n"
-            f"Описание: {clean_search_teg(self.snippet_requirement)}\n{clean_search_teg(self.snippet_responsibility)}\n-------"
+            f"Описание: {clean_search_teg(self.snippet_requirement)}\n"
+            f"{clean_search_teg(self.snippet_responsibility)}\n-------"
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.to_dict()}"
 
     @classmethod
@@ -88,235 +97,9 @@ class Vacancy:
             "name": self.name,
             "area": self.area,
             "salary_from": self.salary_from,
-            "url": self.url, #[0] if isinstance(self.url, tuple) else self.url,
-            "snippet_requirement": clean_search_teg(self.snippet_requirement), #[0] if isinstance(self.url, tuple) else self.snippet_requirement,
+            "url": self.url,  # [0] if isinstance(self.url, tuple) else self.url,
+            "snippet_requirement": clean_search_teg(
+                self.snippet_requirement
+            ),  # [0] if isinstance(self.url, tuple) else self.snippet_requirement,
             "snippet_responsibility": clean_search_teg(self.snippet_responsibility),
         }
-
-
-if __name__ == "__main__":
-    list_vacancies = [
-        {
-            "id": "115882074",
-            "premium": False,
-            "name": "Ученик на производство",
-            "department": None,
-            "has_test": False,
-            "response_letter_required": False,
-            "area": {"id": "2082", "name": "Фрязино (Московская область)", "url": "https://api.hh.ru/areas/2082"},
-            "salary": None,
-            "salary_range": None,
-            "type": {"id": "open", "name": "Открытая"},
-            "address": {
-                "city": "Фрязино",
-                "street": "Вокзальная улица",
-                "building": "2А",
-                "lat": 55.964381268294964,
-                "lng": 38.046974369031304,
-                "description": None,
-                "raw": "Фрязино, Вокзальная улица, 2А",
-                "metro": None,
-                "metro_stations": [],
-                "id": "794010",
-            },
-            "response_url": None,
-            "sort_point_distance": None,
-            "published_at": "2025-03-21T08:22:50+0300",
-            "created_at": "2025-03-21T08:22:50+0300",
-            "archived": False,
-            "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=115882074",
-            "show_logo_in_search": None,
-            "insider_interview": None,
-            "url": "https://api.hh.ru/vacancies/115882074?host=hh.ru",
-            "alternate_url": "https://hh.ru/vacancy/115882074",
-            "relations": [],
-            "employer": {
-                "id": "1750736",
-                "name": "НПП Исток им. Шокина",
-                "url": "https://api.hh.ru/employers/1750736",
-                "alternate_url": "https://hh.ru/employer/1750736",
-                "logo_urls": {
-                    "original": "https://img.hhcdn.ru/employer-logo-original/369941.png",
-                    "90": "https://img.hhcdn.ru/employer-logo/1922022.png",
-                    "240": "https://img.hhcdn.ru/employer-logo/1922023.png",
-                },
-                "vacancies_url": "https://api.hh.ru/vacancies?employer_id=1750736",
-                "accredited_it_employer": False,
-                "trusted": True,
-            },
-            "snippet": {
-                "requirement": "Образование не ниже средне-специального. Внимательность. Усидчивость. Готовность работать в сменном графике.",
-                "responsibility": "Изготовление различных изделий, работа с мелкими деталями, с микроскопом.",
-            },
-            "show_contacts": True,
-            "contacts": None,
-            "schedule": {"id": "fullDay", "name": "Полный день"},
-            "working_days": [],
-            "working_time_intervals": [],
-            "working_time_modes": [],
-            "accept_temporary": False,
-            "fly_in_fly_out_duration": [],
-            "work_format": [{"id": "ON_SITE", "name": "На\xa0месте работодателя"}],
-            "working_hours": [{"id": "HOURS_8", "name": "8\xa0часов"}],
-            "work_schedule_by_days": [{"id": "FIVE_ON_TWO_OFF", "name": "5/2"}],
-            "night_shifts": True,
-            "professional_roles": [{"id": "85", "name": "Оператор производственной линии"}],
-            "accept_incomplete_resumes": True,
-            "experience": {"id": "noExperience", "name": "Нет опыта"},
-            "employment": {"id": "full", "name": "Полная занятость"},
-            "employment_form": {"id": "FULL", "name": "Полная"},
-            "internship": True,
-            "adv_response_url": None,
-            "is_adv_vacancy": False,
-            "adv_context": None,
-        },
-        {
-            "id": "118448461",
-            "premium": False,
-            "name": "Откачник-вакуумщик 4 разряда",
-            "department": None,
-            "has_test": False,
-            "response_letter_required": False,
-            "area": {"id": "2", "name": "Санкт-Петербург", "url": "https://api.hh.ru/areas/2"},
-            "salary": {"from": 50000, "to": None, "currency": "RUR", "gross": True},
-            "salary_range": {
-                "from": 50000,
-                "to": None,
-                "currency": "RUR",
-                "gross": True,
-                "mode": {"id": "MONTH", "name": "За\xa0месяц"},
-                "frequency": None,
-            },
-            "type": {"id": "open", "name": "Открытая"},
-            "address": {
-                "city": "Санкт-Петербург",
-                "street": "проспект Тореза",
-                "building": "68Р",
-                "lat": 60.012103,
-                "lng": 30.340168,
-                "description": None,
-                "raw": "Санкт-Петербург, проспект Тореза, 68Р",
-                "metro": None,
-                "metro_stations": [],
-                "id": "12582325",
-            },
-            "response_url": None,
-            "sort_point_distance": None,
-            "published_at": "2025-03-17T14:14:32+0300",
-            "created_at": "2025-03-17T14:14:32+0300",
-            "archived": False,
-            "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=118448461",
-            "show_logo_in_search": None,
-            "insider_interview": None,
-            "url": "https://api.hh.ru/vacancies/118448461?host=hh.ru",
-            "alternate_url": "https://hh.ru/vacancy/118448461",
-            "relations": [],
-            "employer": {
-                "id": "534827",
-                "name": "ЦНИИ Электрон",
-                "url": "https://api.hh.ru/employers/534827",
-                "alternate_url": "https://hh.ru/employer/534827",
-                "logo_urls": {
-                    "original": "https://img.hhcdn.ru/employer-logo-original/1199846.jpg",
-                    "90": "https://img.hhcdn.ru/employer-logo/6419833.jpeg",
-                    "240": "https://img.hhcdn.ru/employer-logo/6419834.jpeg",
-                },
-                "vacancies_url": "https://api.hh.ru/vacancies?employer_id=534827",
-                "accredited_it_employer": False,
-                "trusted": True,
-            },
-            "snippet": {
-                "requirement": "Среднее профессиональное образование. Аккуратность, ответственность.",
-                "responsibility": "Работа с деталями из стекла. Работа с газовой горелкой. Работа с контрольно-измерительными приборами.",
-            },
-            "show_contacts": True,
-            "contacts": None,
-            "schedule": {"id": "fullDay", "name": "Полный день"},
-            "working_days": [],
-            "working_time_intervals": [],
-            "working_time_modes": [],
-            "accept_temporary": False,
-            "fly_in_fly_out_duration": [],
-            "work_format": [],
-            "working_hours": [{"id": "HOURS_8", "name": "8\xa0часов"}],
-            "work_schedule_by_days": [{"id": "FIVE_ON_TWO_OFF", "name": "5/2"}],
-            "night_shifts": False,
-            "professional_roles": [{"id": "40", "name": "Другое"}],
-            "accept_incomplete_resumes": False,
-            "experience": {"id": "noExperience", "name": "Нет опыта"},
-            "employment": {"id": "full", "name": "Полная занятость"},
-            "employment_form": {"id": "FULL", "name": "Полная"},
-            "internship": False,
-            "adv_response_url": None,
-            "is_adv_vacancy": False,
-            "adv_context": None,
-        },
-        {
-            "id": "118832907",
-            "premium": False,
-            "name": "Вакуумщик/Оператор вакуумного станка",
-            "department": None,
-            "has_test": False,
-            "response_letter_required": False,
-            "area": {"id": "172", "name": "Костанай", "url": "https://api.hh.ru/areas/172"},
-            "salary": {"from": 300000, "to": 400000, "currency": "KZT", "gross": True},
-            "salary_range": {
-                "from": 300000,
-                "to": 400000,
-                "currency": "KZT",
-                "gross": True,
-                "mode": {"id": "MONTH", "name": "За\xa0месяц"},
-                "frequency": {"id": "MONTHLY", "name": "Раз в\xa0месяц"},
-            },
-            "type": {"id": "open", "name": "Открытая"},
-            "address": None,
-            "response_url": None,
-            "sort_point_distance": None,
-            "published_at": "2025-03-26T18:17:29+0300",
-            "created_at": "2025-03-26T18:17:29+0300",
-            "archived": False,
-            "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=118832907",
-            "insider_interview": None,
-            "url": "https://api.hh.ru/vacancies/118832907?host=hh.ru",
-            "alternate_url": "https://hh.ru/vacancy/118832907",
-            "relations": [],
-            "employer": {
-                "id": "9733561",
-                "name": "INVEST STROY LES",
-                "url": "https://api.hh.ru/employers/9733561",
-                "alternate_url": "https://hh.ru/employer/9733561",
-                "logo_urls": None,
-                "vacancies_url": "https://api.hh.ru/vacancies?employer_id=9733561",
-                "accredited_it_employer": False,
-                "trusted": True,
-            },
-            "snippet": {
-                "requirement": "Знать технологии и процессы. Требования: Опыт работы на вакуумном прессе. Аккуратность и внимательность к деталям.",
-                "responsibility": "Выполнять полный функционал вакуумного пресса. Соблюдение частоты на рабочем месте.",
-            },
-            "show_contacts": True,
-            "contacts": None,
-            "schedule": {"id": "fullDay", "name": "Полный день"},
-            "working_days": [],
-            "working_time_intervals": [],
-            "working_time_modes": [],
-            "accept_temporary": False,
-            "fly_in_fly_out_duration": [],
-            "work_format": [{"id": "ON_SITE", "name": "На\xa0месте работодателя"}],
-            "working_hours": [{"id": "HOURS_8", "name": "8\xa0часов"}],
-            "work_schedule_by_days": [{"id": "SIX_ON_ONE_OFF", "name": "6/1"}],
-            "night_shifts": False,
-            "professional_roles": [{"id": "86", "name": "Оператор станков с ЧПУ"}],
-            "accept_incomplete_resumes": True,
-            "experience": {"id": "between1And3", "name": "От 1 года до 3 лет"},
-            "employment": {"id": "full", "name": "Полная занятость"},
-            "employment_form": {"id": "FULL", "name": "Полная"},
-            "internship": False,
-            "adv_response_url": None,
-            "is_adv_vacancy": False,
-            "adv_context": None,
-        },
-    ]
-
-    vacancies_list = Vacancy.cast_to_object_list(list_vacancies)
-    print(vacancies_list)
