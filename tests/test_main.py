@@ -1,5 +1,5 @@
 from src.vacancy_operations import Vacancy
-from src.utils import sort_vacancies, get_vacancies_by_salary, get_top_vacancies, filter_vacancies
+from src.utils import sort_vacancies, get_vacancies_by_salary, get_top_vacancies, filter_vacancies, clean_split_str
 
 
 def test_user_interaction(test_list_hh, capsys):
@@ -29,14 +29,16 @@ def test_user_interaction(test_list_hh, capsys):
 def test_filter_vacancies(test_list_hh, capsys):
     """Тест функции фильтрации"""
     hh_vacancies = Vacancy.cast_to_object_list(test_list_hh)
-    filtered_vacancies = filter_vacancies(hh_vacancies, ["усидчивость"])
-    assert repr(filtered_vacancies) == ("[{'id': '115882074', 'name': 'Ученик на производство', 'area': 'Фрязино "
-                                         "(Московская область)', 'salary_from': 0, 'url': "
-                                         "'https://hh.ru/vacancy/115882074', 'snippet_requirement': 'Образование не "
-                                         'ниже средне-специального. Внимательность. Усидчивость. Готовность работать в '
-                                         "сменном графике.', 'snippet_responsibility': 'Образование не ниже "
-                                         'средне-специального. Внимательность. Усидчивость. Готовность работать в '
-                                         "сменном графике.'}]")
+    filtered_vacancies = filter_vacancies(hh_vacancies, clean_split_str("усидчивость,"))
+    assert repr(filtered_vacancies) == (
+        "[{'id': '115882074', 'name': 'Ученик на производство', 'area': 'Фрязино "
+        "(Московская область)', 'salary_from': 0, 'url': "
+        "'https://hh.ru/vacancy/115882074', 'snippet_requirement': 'Образование не "
+        "ниже средне-специального. Внимательность. Усидчивость. Готовность работать в "
+        "сменном графике.', 'snippet_responsibility': 'Образование не ниже "
+        "средне-специального. Внимательность. Усидчивость. Готовность работать в "
+        "сменном графике.'}]"
+    )
     filtered_vacancies = filter_vacancies(hh_vacancies, True)
     captured = capsys.readouterr()
     assert captured.out == "Ошибка фильтрации <class 'Exception'>: Для фильтрации введите слова\n"
@@ -100,5 +102,6 @@ def test_get_top_vacancies(test_list_hh, capsys):
     )
     top_vacancy = get_top_vacancies(hh_vacancies, "123")
     captured = capsys.readouterr()
-    assert captured.out == ("Ошибка <class 'Exception'> формирования топ - 123 вакансий: Введите целое "
-                            'число для выборки топ вакансий\n')
+    assert captured.out == (
+        "Ошибка <class 'Exception'> формирования топ - 123 вакансий: Введите целое " "число для выборки топ вакансий\n"
+    )

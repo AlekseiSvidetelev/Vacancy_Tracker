@@ -8,7 +8,7 @@ from src.vacancy_operations import Vacancy
 
 
 def test_class_jsonsaver(test_list_hh, test_data):
-
+    """ Проверка работы класса JSONSaver """
     vacancy_list = Vacancy.cast_to_object_list(test_list_hh)
     file_name = "testing.json"
     res_1 = JSONSaver(file_name)
@@ -27,6 +27,7 @@ def test_class_jsonsaver(test_list_hh, test_data):
 
 
 def test_exception_add(test_list_hh, capsys):
+    """ Проверка исключений и вывод информации в консоль JSONSaver при сохранении """
     res_1 = JSONSaver()
     res_1.save_to_file("123")
     captured = capsys.readouterr()
@@ -37,6 +38,7 @@ def test_exception_add(test_list_hh, capsys):
 
 
 def test_exception_del(test_list_hh, capsys):
+    """ Проверка исключений и вывод информации в консоль JSONSaver при удалении """
     res_1 = JSONSaver()
     res_1.deleting_from_file("123")
     captured = capsys.readouterr()

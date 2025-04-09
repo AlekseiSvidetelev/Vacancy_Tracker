@@ -1,4 +1,8 @@
-from src.utils import clean_search_teg
+import re
+from typing import Any
+
+
+# from src.utils import clean_search_teg
 
 
 class Vacancy:
@@ -42,15 +46,15 @@ class Vacancy:
             f"Зарплата от: {'не указана' if self.salary_from == 0 else self.salary_from}\n"
             f"Местоположение: {self.area}\n"
             f"Ссылка на вакансию: {self.url}\n"
-            f"Описание: {clean_search_teg(self.snippet_requirement)}\n"
-            f"{clean_search_teg(self.snippet_responsibility)}\n-------"
+            f"Описание: {self.clean_search_teg(self.snippet_requirement)}\n"
+            f"{self.clean_search_teg(self.snippet_responsibility)}\n-------"
         )
 
     def __repr__(self) -> str:
         return f"{self.to_dict()}"
 
     @classmethod
-    def cast_to_object_list(cls, object_list):
+    def cast_to_object_list(cls, object_list: dict[str, Any]) -> list["Vacancy"]:
         """Преобразование JSON файла в объект класса"""
         try:
             if not isinstance(object_list, list) or not all(isinstance(item, dict) for item in object_list):
@@ -90,7 +94,7 @@ class Vacancy:
         except Exception as e:
             print(f"Ошибка преобразования из JSON файла: {e}")
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         """Метод предоставления объекта вакансии в виде словаря"""
         return {
             "id": self.vacancy_id,
@@ -98,8 +102,20 @@ class Vacancy:
             "area": self.area,
             "salary_from": self.salary_from,
             "url": self.url,  # [0] if isinstance(self.url, tuple) else self.url,
-            "snippet_requirement": clean_search_teg(
+            "snippet_requirement": self.clean_search_teg(
                 self.snippet_requirement
             ),  # [0] if isinstance(self.url, tuple) else self.snippet_requirement,
-            "snippet_responsibility": clean_search_teg(self.snippet_responsibility),
+            "snippet_responsibility": self.clean_search_teg(self.snippet_responsibility),
         }
+
+    @staticmethod
+    def clean_search_teg(update_string: str) -> str:
+        """Очистка поисковых тегов <highlighttext> и </highlighttext>"""
+        try:
+            if not isinstance(update_string, str):
+                raise ValueError("Очистить от тегов можно только строку")
+            clean_string = re.sub(r"<highlighttext>|</highlighttext>", "", update_string)
+            return clean_string
+        except Exception as e:
+            print(f"Ошибка очистки тегов: {e}")
+            return ""

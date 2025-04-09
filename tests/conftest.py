@@ -1,15 +1,9 @@
 import pytest
 
-from src.get_vacancies import HeadHunterAPI
-
-
-@pytest.fixture
-def test_case():
-    return HeadHunterAPI()
-
 
 @pytest.fixture
 def test_list_hh():
+    """ Список словарей с вакансиями """
     return [
         {
             "id": "115882074",
@@ -236,6 +230,7 @@ def test_list_hh():
 
 @pytest.fixture
 def test_data():
+    """  """
     return [
         {
             "area": "Фрязино (Московская область)",
