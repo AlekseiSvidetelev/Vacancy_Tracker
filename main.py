@@ -25,7 +25,6 @@ def user_interaction() -> None:
 
         # Фильтрация вакансий по заданным параметрам
         filter_words = clean_split_str(input("Введите ключевые слова для фильтрации вакансий: "))
-        print(filter_words)
         filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
         if not filtered_vacancies:
             raise ValueError("Вакансий с заданными параметрами не найдено")
