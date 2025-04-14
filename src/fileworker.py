@@ -13,9 +13,9 @@ class Saver(ABC):
     file_name: str
 
     @abstractmethod
-    def __init__(self, file_name: Optional[str] = None):
+    def __init__(self, file_name: str):
         """Инициализация объекта с указанием имени файла"""
-        self._file_name = file_name
+        pass
 
     @property
     @abstractmethod
@@ -47,28 +47,41 @@ class Saver(ABC):
 
 class JSONSaver(Saver):
 
+    file_name: str
+
     def __init__(self, file_name: Optional[str] = None):
-        super().__init__(file_name)
-        self.file_name = file_name
+        self.__file_name = file_name if file_name is not None else "vacancies.json"
 
     def __repr__(self):
         return f"{self.file_name}"
 
+    @staticmethod
+    def __check_file_name(file_name: str) -> None:
+        """Проверка расширения файла"""
+        if not isinstance(file_name, str):
+            raise ValueError("Название файла должно быть строкой")
+        if file_name[-5:] != ".json":
+            raise ValueError("Файл должен иметь расширение .json")
+
+    @staticmethod
+    def __clean_file_name(file_name: str) -> str:
+        """Очистка от запрещенных символов"""
+        clean_word = re.sub(r'[<>:"/\\|?*]', "", file_name)
+        update_spase = clean_word.replace(" ", "_")
+        return update_spase
+
     @property
     def file_name(self) -> str:
-        return self._file_name
+        return self.__file_name
 
     @file_name.setter
     def file_name(self, new_file_name: str) -> None:
         try:
-            if new_file_name is None:
-                new_file_name = "vacancies.json"
-            clean_word = re.sub(r'[<>:"/\\|?*]', "", new_file_name)
-            replace_spase = clean_word.replace(" ", "_")
-            parts_name = replace_spase.split(".")
-            self._file_name = parts_name[0] + ".json"
+            file_name_update = self.__clean_file_name(new_file_name)
+            self.__check_file_name(new_file_name)
+            self.__file_name = file_name_update
         except Exception as e:
-            print(f"Ошибка {Exception}: {e}")
+            print(f"Ошибка в назначении имени файла: {e}")
 
     def read_from_file(self, file_name: str) -> list[dict[str, Any]]:
         """Функция для чтения JSON файла"""
@@ -116,16 +129,16 @@ class JSONSaver(Saver):
 
 
 if __name__ == "__main__":
-    saver = JSONSaver("vac.json")
+    saver = JSONSaver()
     print(saver)
 
-    # saver.file_name = "file.txt"
-    # print(saver.file_name)
+    saver.file_name = "file.txt"
+    print(saver.file_name)
     # saver.file_name = "filesefd.refl.erfe"
     # print(saver.file_name)
     # saver.file_name = "file.rtg"
     # print(saver.file_name)
     # saver.file_name = "file><jg"
     # print(saver.file_name)
-    # saver.file_name = "asd_asd.asd"
+    # saver.file_name = "asd.json"
     # print(saver.file_name)

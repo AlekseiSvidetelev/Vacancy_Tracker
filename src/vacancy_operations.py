@@ -54,7 +54,7 @@ class Vacancy:
         return f"{self.to_dict()}"
 
     @classmethod
-    def cast_to_object_list(cls, object_list: dict[str, Any]) -> list["Vacancy"]:
+    def cast_to_object_list(cls, object_list: list[dict[str, Any]]) -> list["Vacancy"]:
         """Преобразование JSON файла в объект класса"""
         try:
             if not isinstance(object_list, list) or not all(isinstance(item, dict) for item in object_list):

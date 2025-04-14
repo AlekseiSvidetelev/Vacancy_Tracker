@@ -12,10 +12,6 @@ class VacancyAPI(ABC):
     def get_vacancies(self, keyword: str) -> list[dict[str, Any]]:
         pass
 
-    @abstractmethod
-    def connect(self, params: dict) -> Any:  # Добавляем абстрактный метод
-        pass
-
 
 class HeadHunterAPI(VacancyAPI):
     """Класс для получения вакансий с HeadHunter"""
@@ -43,7 +39,7 @@ class HeadHunterAPI(VacancyAPI):
     def __str__(self) -> str:
         return f"{self.vacancies}"
 
-    def connect(self, __params: dict[Any, Any]) -> requests.Response:
+    def __connect(self, __params: dict[Any, Any]) -> requests.Response:
         """Метод для подключения к API"""
         try:
             response = requests.get(self.__base_url, headers=self.__headers, params=self.__params)
@@ -60,7 +56,7 @@ class HeadHunterAPI(VacancyAPI):
         try:
             time_start = time.time()
             while self.__params["page"] != 20:
-                response = self.connect(self.__params)
+                response = self.__connect(self.__params)
                 items = response.json().get("items", [])
                 if not items:
                     break
