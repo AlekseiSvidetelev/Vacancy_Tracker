@@ -2,9 +2,6 @@ import re
 from typing import Any
 
 
-# from src.utils import clean_search_teg
-
-
 class Vacancy:
     """Класс представления вакансии"""
 
@@ -28,13 +25,37 @@ class Vacancy:
         snippet_requirement: str,
         snippet_responsibility: str,
     ):
-        self.vacancy_id = vacancy_id
+
+        self.vacancy_id = self.__is_valid_vacancy_id(vacancy_id)
         self.name = name
         self.area = area
-        self.salary_from = salary_from
-        self.url = url
+        self.salary_from = self.__is_valid_salary_from(salary_from)
+        self.url = self.__is_valid_url(url)
         self.snippet_requirement = snippet_requirement
         self.snippet_responsibility = snippet_responsibility
+
+    @staticmethod
+    def __is_valid_salary_from(salary: int | str) -> int | str:
+        """Проверка актуальности заработной платы"""
+        if not isinstance(salary, (float | int)):
+            raise ValueError("Зарплата должна быть числом")
+        if salary < 0:
+            raise ValueError("Зарплата не может быть отрицательной")
+        return salary
+
+    @staticmethod
+    def __is_valid_vacancy_id(vacancy_id: int) -> int:
+        """Проверка номера ID вакансии"""
+        if not isinstance(vacancy_id, int):
+            raise ValueError("ID должен быть целым числом")
+        return vacancy_id
+
+    @staticmethod
+    def __is_valid_url(url: str) -> str:
+        """Проверка валидности ссылки на вакансию"""
+        if not isinstance(url, str):
+            raise ValueError("Ссылка на вакансию не актуальна")
+        return url
 
     def __lt__(self, other: "Vacancy") -> bool:
         return self.salary_from < other.salary_from
@@ -55,13 +76,13 @@ class Vacancy:
 
     @classmethod
     def cast_to_object_list(cls, object_list: list[dict[str, Any]]) -> list["Vacancy"]:
-        """Преобразование JSON файла в объект класса"""
+        """Преобразование списка словарей вакансий в объект класса"""
         try:
             if not isinstance(object_list, list) or not all(isinstance(item, dict) for item in object_list):
                 raise ValueError("Ожидается список словарей")
             vacancies_object = []
             for item in object_list:
-                vacancy_id = item.get("id")
+                vacancy_id = int(item.get("id"))
                 name = item.get("name", "")
                 area = item.get("area").get("name", "")
                 salary = item.get("salary")
@@ -92,7 +113,7 @@ class Vacancy:
                 vacancies_object.append(vacancy)
             return vacancies_object
         except Exception as e:
-            print(f"Ошибка преобразования из JSON файла: {e}")
+            print(f"Ошибка преобразования вакансии в объект: {e}")
 
     def to_dict(self) -> dict[str, Any]:
         """Метод предоставления объекта вакансии в виде словаря"""
@@ -101,10 +122,8 @@ class Vacancy:
             "name": self.name,
             "area": self.area,
             "salary_from": self.salary_from,
-            "url": self.url,  # [0] if isinstance(self.url, tuple) else self.url,
-            "snippet_requirement": self.clean_search_teg(
-                self.snippet_requirement
-            ),  # [0] if isinstance(self.url, tuple) else self.snippet_requirement,
+            "url": self.url,
+            "snippet_requirement": self.clean_search_teg(self.snippet_requirement),
             "snippet_responsibility": self.clean_search_teg(self.snippet_responsibility),
         }
 

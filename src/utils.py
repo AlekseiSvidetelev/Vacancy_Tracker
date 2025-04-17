@@ -64,7 +64,7 @@ def get_vacancies_by_salary(
         ]
         return filtered_object_list
     except Exception as e:
-        print(f"Ошибка {Exception} при попытке получения выборки: {e}")
+        print(f"Ошибка при попытке получения выборки вакансий: {e}")
         return []
 
 
